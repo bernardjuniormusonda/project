@@ -1,0 +1,26 @@
+<%- include("header") %>
+<section class="page-hero">
+    <div class="container">
+        <p class="eyebrow">Our service areas</p>
+        <h1>Services</h1>
+        <p class="lead">Nationwide coverage. Reliable delivery.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="service-grid wide">
+            <% for (const [ic, t, d] of services) { %>
+                <div class="service reveal"><span class="service-icon"><%- icon(ic, 28) %></span><div><h3><%- e(t) %></h3><p><%- e(d) %></p></div></div>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<section class="cta-band">
+    <div class="container cta-inner">
+        <div><h2>Which service do you need?</h2><p>Send us the details and we will respond with a quote.</p></div>
+        <a class="btn btn-accent" href="<%- e(url('quote.php')) %>">Request a quote</a>
+    </div>
+</section>
+<%- include("footer") %>

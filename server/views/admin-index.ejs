@@ -1,0 +1,34 @@
+<%- include("admin-header") %>
+<p class="muted">Welcome back, <%-  e(adminName ?? 'admin') %>.</p>
+<div class="kpis">
+    <% for (const [label ,  n] of Object.entries(kpis)) { %>
+        <div class="kpi"><strong><%-  n %></strong><span><%-  e(label) %></span></div>
+    <% } %>
+</div>
+
+<div class="two-col">
+    <section class="panel">
+        <h2>Latest quote requests</h2>
+        <% if (!quotes.length) { %><p class="muted">No quote requests yet.</p><% } %>
+        <ul class="feed">
+            <% for (const q of quotes) { %>
+                <li><strong><%-  e(q['name']) %></strong><%-  q['organisation'] !== '' ? ' <span class="muted">(' + e(q['organisation']) + ')</span>' : '' %>
+                    <span class="pill pill-<%-  e(q['status']) %>"><%-  e(ucfirst(q['status'])) %></span>
+                    <span class="muted"><%-  e(q['ref']) %> &middot; <%-  e(substr(q['created_at'], 0, 16)) %></span></li>
+            <% } %>
+        </ul>
+        <a class="link-arrow" href="<%-  e(url('admin/quotes.php')) %>">All quote requests <%-  icon('arrow', 16) %></a>
+    </section>
+    <section class="panel">
+        <h2>Latest messages</h2>
+        <% if (!msgs.length) { %><p class="muted">No messages yet.</p><% } %>
+        <ul class="feed">
+            <% for (const m of msgs) { %>
+                <li><strong><%-  e(m['name']) %></strong> <%-  m['is_read'] ? '' : '<span class="badge">new</span>' %>
+                    <span class="muted"><%-  e(m['subject'] || 'No subject') %> &middot; <%-  e(substr(m['created_at'], 0, 16)) %></span></li>
+            <% } %>
+        </ul>
+        <a class="link-arrow" href="<%-  e(url('admin/messages.php')) %>">All messages <%-  icon('arrow', 16) %></a>
+    </section>
+</div>
+<%- include("admin-footer") %>

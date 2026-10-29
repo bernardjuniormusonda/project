@@ -1,0 +1,16 @@
+<%- include('header') %>
+<section class="section"><div class="container" style="max-width:540px">
+<h1>Administrator access</h1>
+<p>Access is restricted to invited users with the admin role.</p>
+<% if (errors.length) { %><div class="alert alert-error" role="alert"><%= errors.join(' ') %></div><% } %>
+<form class="form panel" method="post" id="auth-form"><%- csrf_field() %>
+<input type="hidden" name="action" id="auth-action" value="<%= recover ? 'request-recovery' : 'login' %>">
+<input type="hidden" name="token" id="auth-token" value="">
+<div class="field" id="auth-email"><label for="email">Email address</label><input id="email" name="email" type="email" required autocomplete="email"></div>
+<div class="field" id="auth-password" <%= recover ? 'hidden' : '' %>><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" <%= recover ? '' : 'required' %>></div>
+<button class="btn btn-primary" id="auth-submit" type="submit"><%= recover ? 'Send recovery email' : 'Log in' %></button>
+</form>
+<p><a href="/admin/login.php?recover=1">Forgot your password?</a> · <a href="/admin/login.php">Log in</a></p>
+<p class="small muted">First-time setup: invite the administrator through Identity in the Netlify dashboard, then assign the admin role.</p>
+</div></section><script src="/assets/js/auth.js" defer></script>
+<%- include('footer') %>

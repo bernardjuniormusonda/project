@@ -1,0 +1,36 @@
+<%- include("admin-header") %>
+<p><a class="btn btn-primary" href="<%-  e(url('admin/category-edit.php')) %>">+ Add category</a></p>
+<div class="table-wrap">
+<table class="table">
+    <thead><tr><th>Category</th><th>Items</th><th>Status</th><th>Order</th><th class="right">Actions</th></tr></thead>
+    <tbody>
+    <% if (!rows.length) { %><tr><td colspan="5" class="muted">No categories yet.</td></tr><% } %>
+    <% for (const r of rows) { %>
+        <tr>
+            <td><strong><%-  e(r['title']) %></strong><br><small class="muted">/product.php?slug=<%-  e(r['slug']) %></small></td>
+            <td><%-  count(lines(r['items'])) %></td>
+            <td><span class="pill pill-<%-  e(r['status']) %>"><%-  e(ucfirst(r['status'])) %></span></td>
+            <td>
+                <form method="post" class="inline">
+                    <%-  csrf_field() %><input type="hidden" name="id" value="<%-  r['id'] %>">
+                    <button class="icon-btn" name="action" value="up" title="Move up" aria-label="Move up">&uarr;</button>
+                    <button class="icon-btn" name="action" value="down" title="Move down" aria-label="Move down">&darr;</button>
+                </form>
+            </td>
+            <td class="right actions">
+                <a class="btn btn-sm btn-ghost-dark" href="<%-  e(url('admin/category-edit.php?id=' + r['id'])) %>">Edit</a>
+                <form method="post" class="inline">
+                    <%-  csrf_field() %><input type="hidden" name="id" value="<%-  r['id'] %>">
+                    <button class="btn btn-sm btn-ghost-dark" name="action" value="toggle"><%-  r['status'] === 'published' ? 'Unpublish' : 'Publish' %></button>
+                </form>
+                <form method="post" class="inline" data-confirm="Delete this category permanently?">
+                    <%-  csrf_field() %><input type="hidden" name="id" value="<%-  r['id'] %>">
+                    <button class="btn btn-sm btn-danger" name="action" value="delete">Delete</button>
+                </form>
+            </td>
+        </tr>
+    <% } %>
+    </tbody>
+</table>
+</div>
+<%- include("admin-footer") %>

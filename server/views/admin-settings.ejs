@@ -1,0 +1,12 @@
+<%- include('admin-header') %>
+<form class="form" method="post"><%- csrf_field() %>
+<% for (const [title,fields] of Object.entries(groups)) { %>
+<fieldset class="panel"><legend><%= title %></legend>
+<% for (const [key,[label,type]] of Object.entries(fields)) { const val = posted ? (old[key] || '') : setting(key); %>
+<div class="field"><label for="s_<%= key %>"><%= label %></label>
+<% if (type === 'bool') { %><input id="s_<%= key %>" type="checkbox" name="<%= key %>" value="1" <%= val === '1' ? 'checked' : '' %>>
+<% } else if (type === 'textarea') { %><textarea id="s_<%= key %>" name="<%= key %>" rows="4" maxlength="4000"><%= val %></textarea>
+<% } else { %><input id="s_<%= key %>" name="<%= key %>" type="<%= type %>" value="<%= val %>" maxlength="300"><% } %></div>
+<% } %></fieldset><% } %><button class="btn btn-primary" type="submit">Save settings</button></form>
+<p><a href="/admin/login.php?recover=1">Reset your password by email</a></p>
+<%- include('admin-footer') %>

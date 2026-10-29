@@ -1,70 +1,33 @@
-# Printel Enterprise website
+# Printel Enterprise
 
-A complete website with a front end (HTML, CSS, JavaScript) and a back end (PHP + SQLite database + admin panel), built from the Printel company profile.
+Printel's public website and administration panel run on Netlify Functions with the original branding, responsive layouts, product photographs, and catalogue. Netlify Database (Postgres with Drizzle) stores settings, categories, quotes, contact messages, quote baskets, and submission limits. Netlify Blobs stores images uploaded by administrators. Netlify Identity handles administrator accounts and password recovery.
 
-## What is included
+## Deployment
 
-**Public website**
-- Home: hero, trust strip, featured product categories, who we are, services, organisations served
-- About: who we are, what we do, mission, why choose us, unique proposition
-- Products: 12 categories with photos and live search, and a page for each category listing what you supply
-- Services: procurement, wholesale distribution, corporate branding, sourcing, web design, after-sales
-- Request a quote: customers tick items on category pages ("Add"), set quantities, and send one quote request. They get a reference number such as PE-260919-0001
-- Contact: message form, phone numbers, email, address, hours, and (optional) banking details
-- WhatsApp button, mobile menu, works on phones and desktops, no external dependencies
+Connect this repository to the existing Printel Netlify project. The repository's `netlify.toml` publishes only `public/`, packages the TypeScript function, and includes its server-rendered templates. No application build command is required. Netlify installs the npm dependencies and applies the SQL migrations in `netlify/database/migrations/` before publishing. The initial migrations preserve the existing business settings, twelve product categories, and existing customer records from the SQLite site.
 
-**Admin panel (`/admin/`)**
-- Dashboard with new quotes and unread messages
-- Quote requests: filter by status (New, Contacted, Quoted, Won, Closed), add an internal note, click-to-call and click-to-email, CSV download
-- Messages: read, mark, delete, CSV download
-- Product categories: add, edit, delete, publish/unpublish, reorder, upload images, edit the item list customers can add to a quote
-- Settings: business name, home/about text, contact details, WhatsApp, Facebook, credentials, organisations served, banking details (with a show/hide switch), change password
+The old PHP files and SQLite source remain outside the published directory for reference. They are not served or executed. SQLite is not used by the deployed application. Database changes and uploaded images persist across deployments; edits in the admin panel take effect without a rebuild.
 
-**Security:** CSRF protection on all forms, prepared SQL statements, escaped output, password hashing, login rate limiting, spam honeypot and form rate limiting, image upload checks, security headers.
+## Administrator setup
 
-## Requirements
+1. Open the project's Netlify dashboard and select Identity.
+2. Invite the administrator by email. No public administrator signup or first-visitor setup is available.
+3. Follow the invitation link to set a password.
+4. Open that user in Identity and assign the `admin` role.
+5. Visit `/admin/` and log in with the invited email and password.
 
-PHP 8.1 or newer with `pdo_sqlite` and `fileinfo` (standard on most hosts). No separate database server is needed.
+Invitation and password recovery links work from the home page or `/admin/login.php`. Password resets are available from the login page and admin settings. Accounts without the server-controlled `admin` role cannot access administration pages or CSV exports.
 
-## Try it on your computer
+## Features
 
-```
-cd printel-site
-php -S localhost:8000
-```
+The public pages are available at their existing addresses: `/`, `/about.php`, `/products.php`, `/product.php?slug=…`, `/services.php`, `/quote.php`, and `/contact.php`. Product search, product images, WhatsApp links, and mobile navigation are retained. Quote lists persist in the database under an anonymous browser cookie. Quote requests receive a reference number after being saved. Contact and quote submissions appear in the admin panel.
 
-Open http://localhost:8000
+Administrators can review, filter, annotate, update, delete, and export quotes; read, mark, delete, and export messages; manage category descriptions and item lists; publish, hide, and reorder categories; upload JPG, PNG, or WebP images up to 3 MB; and edit business settings, contact information, and optional banking details. The original optional PHP `mail()` notification integration is not used: new submissions are reviewed in the dashboard.
 
-## Put it on a web host
+Forms validate data on the server and require an origin and CSRF token. Public submissions use a honeypot and database-backed submission limits. All database queries are parameterized, template output is escaped, uploaded image formats are checked from their file signatures, and CSV exports neutralize spreadsheet formulas. Private responses are not cached. Only public assets are published, so configuration, source files, database exports, and customer records are not exposed as static downloads.
 
-1. Upload everything inside `printel-site` to your hosting (for example into `public_html`).
-2. Make sure the `data/` and `uploads/` folders are writable by the web server.
-3. Visit `yourdomain/admin/`. The first time, you create the administrator account.
-4. Check **Settings** and **Product categories** and adjust anything you want to change.
+## Local development and checks
 
-## Before you go live: please check
+Use Node.js 22.12 or newer and install dependencies with `npm ci`. Use `netlify dev --port 8889` for the Netlify runtime, Identity, and storage integration. Database migrations are applied by Netlify's deployment lifecycle; do not apply them manually.
 
-- **Banking details** are hidden by default. Turn them on in Settings only if you want them public.
-- **Organisations you serve** lists four client names from the profile. Keep only those who agreed to be named (edit in Settings).
-- **Credentials** shows "Registered business (PACRA)" and "ZRA tax clearance". Only keep what is currently valid. The ZPPA certificate in the profile showed an expiry of 06/11/2025, so it is not listed.
-- **WhatsApp** uses +260 962 342 018. Change or clear it in Settings.
-- The category photos were cut from your company profile PDF. Replace them with sharper photos in Admin > Product categories when you have them.
-- Add your **Facebook page link** in Settings (the profile only gave the page name).
-- Use HTTPS on your domain, and back up `data/site.sqlite` and `uploads/` regularly.
-- Optional: set `notify_email` in `config.php` to be emailed for each new quote or message (needs PHP `mail()` on your host).
-
-### Nginx users
-The `.htaccess` files only work on Apache. On Nginx, deny access to `/data/`, `/includes/` and `config.php`, and block PHP execution inside `/uploads/`.
-
-## Folder map
-
-```
-index.php, about.php, products.php, product.php,
-services.php, quote.php, contact.php     public pages
-includes/                                shared code (database, helpers, header, footer)
-admin/                                   admin panel
-assets/css, assets/js, assets/img        styles, scripts, logo and product photos
-data/                                    SQLite database (created automatically)
-uploads/                                 images uploaded from the admin
-config.php                               technical settings
-```
+Run `npm run check` for TypeScript checks and `npm test` for template rendering, validation, CSV escaping, CSRF, and unauthenticated administration checks. For a schema change, update `db/schema.ts` and generate a named migration with `npx drizzle-kit generate --name add_descriptive_change`.

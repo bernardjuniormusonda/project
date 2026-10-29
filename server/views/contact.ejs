@@ -1,0 +1,68 @@
+<%- include("header") %>
+<section class="page-hero">
+    <div class="container">
+        <p class="eyebrow">Get in touch</p>
+        <h1>Contact us</h1>
+        <p class="lead">Questions, orders or partnership ideas: we would love to hear from you.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container contact-grid">
+        <form class="form" method="post" novalidate>
+            <%- csrf_field() %>
+            <% if (errors.length) { %>
+                <div class="alert alert-error" role="alert"><ul><% for (const er of errors) { %><li><%- e(er) %></li><% } %></ul></div>
+            <% } %>
+            <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+            <div class="row">
+                <div class="field"><label for="name">Your name</label>
+                    <input id="name" name="name" type="text" required maxlength="120" value="<%- e(old['name']) %>" autocomplete="name"></div>
+                <div class="field"><label for="email">Email address</label>
+                    <input id="email" name="email" type="email" required maxlength="190" value="<%- e(old['email']) %>" autocomplete="email"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label for="phone">Phone <span class="opt">(optional)</span></label>
+                    <input id="phone" name="phone" type="tel" maxlength="40" value="<%- e(old['phone']) %>" autocomplete="tel"></div>
+                <div class="field"><label for="subject">Subject <span class="opt">(optional)</span></label>
+                    <input id="subject" name="subject" type="text" maxlength="160" value="<%- e(old['subject']) %>"></div>
+            </div>
+            <div class="field"><label for="message">Message</label>
+                <textarea id="message" name="message" rows="6" required maxlength="5000"><%- e(old['message']) %></textarea></div>
+            <button class="btn btn-primary" type="submit">Send message</button>
+            <p class="small muted">Looking for prices? Use <a href="<%- e(url('quote.php')) %>">Request a quote</a> to send us an item list.</p>
+        </form>
+
+        <div class="side-stack">
+            <aside class="panel info-panel">
+                <h3>Our details</h3>
+                <ul class="footer-contact dark">
+                    <li><%- icon('phone', 20) %> <span><a href="tel:+<%- e(phone_digits(setting('phone'))) %>"><%- e(setting('phone')) %></a>
+                        <% if (setting('phone2') !== '') { %><br><a href="tel:+<%- e(phone_digits(setting('phone2'))) %>"><%- e(setting('phone2')) %></a><% } %></span></li>
+                    <li><%- icon('mail', 20) %> <a href="mailto:<%- e(setting('email')) %>"><%- e(setting('email')) %></a></li>
+                    <li><%- icon('pin', 20) %> <span><%- nl2br(e(setting('address'))) %></span></li>
+                    <li><%- icon('clock', 20) %> <span><%- e(setting('hours')) %></span></li>
+                </ul>
+                <% if (setting('facebook_name') !== '') { %>
+                    <p class="small">Facebook: <% if (setting('facebook') !== '') { %><a href="<%- e(setting('facebook')) %>" target="_blank" rel="noopener"><%- e(setting('facebook_name')) %></a><% } else { %><%- e(setting('facebook_name')) %><% } %></p>
+                <% } %>
+            </aside>
+
+            <% if (showBank) { %>
+            <aside class="panel info-panel">
+                <h3>Banking details</h3>
+                <dl class="facts">
+                    <dt>Bank</dt><dd><%- e(setting('bank_name')) %></dd>
+                    <dt>Account name</dt><dd><%- e(setting('bank_account_name')) %></dd>
+                    <dt>Account no.</dt><dd><%- e(setting('bank_account_no')) %></dd>
+                    <dt>Branch</dt><dd><%- e(setting('bank_branch')) %></dd>
+                    <dt>Branch no.</dt><dd><%- e(setting('bank_branch_no')) %></dd>
+                    <dt>Swift</dt><dd><%- e(setting('bank_swift')) %></dd>
+                </dl>
+                <p class="small muted">Please confirm details with us by phone before making a large payment.</p>
+            </aside>
+            <% } %>
+        </div>
+    </div>
+</section>
+<%- include("footer") %>

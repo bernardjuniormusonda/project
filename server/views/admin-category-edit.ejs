@@ -1,0 +1,38 @@
+<%- include("admin-header") %>
+<% if (errors.length) { %><div class="alert alert-error" role="alert"><ul><% for (const er of errors) { %><li><%-  e(er) %></li><% } %></ul></div><% } %>
+<form class="form panel" method="post" enctype="multipart/form-data">
+    <%-  csrf_field() %>
+    <input type="hidden" name="id" value="<%-  id %>">
+    <div class="row">
+        <div class="field"><label for="title">Title</label><input id="title" name="title" required maxlength="160" value="<%-  e(c['title']) %>"></div>
+        <div class="field"><label for="slug">URL name <span class="opt">(auto if blank)</span></label><input id="slug" name="slug" maxlength="80" value="<%-  e(c['slug']) %>"></div>
+    </div>
+    <div class="field"><label for="tagline">Tagline <span class="opt">(short slogan, optional)</span></label><input id="tagline" name="tagline" maxlength="120" value="<%-  e(c['tagline']) %>"></div>
+    <div class="field"><label for="summary">Short summary <span class="opt">(shown on cards, max 300)</span></label>
+        <textarea id="summary" name="summary" rows="2" maxlength="300"><%-  e(c['summary']) %></textarea></div>
+    <div class="field"><label for="items">What you supply <span class="opt">(one item per line; customers can add each to their quote list)</span></label>
+        <textarea id="items" name="items" rows="8"><%-  e(c['items']) %></textarea></div>
+    <div class="field"><label for="body">Description <span class="opt">(separate paragraphs with a blank line)</span></label>
+        <textarea id="body" name="body" rows="6"><%-  e(c['body']) %></textarea></div>
+    <div class="row">
+        <div class="field"><label for="icon">Icon</label>
+            <select id="icon" name="icon">
+                <% for (const [k ,  label] of Object.entries(icon_choices())) { %><option value="<%-  e(k) %>"<%-  c['icon'] === k ? ' selected' : '' %>><%-  e(label) %></option><% } %>
+            </select></div>
+        <div class="field"><label for="status">Status</label>
+            <select id="status" name="status">
+                <option value="published"<%-  c['status'] === 'published' ? ' selected' : '' %>>Published</option>
+                <option value="draft"<%-  c['status'] === 'draft' ? ' selected' : '' %>>Draft (hidden)</option>
+            </select></div>
+    </div>
+    <div class="field"><label for="image">Image <span class="opt">(JPG, PNG or WebP, up to <%-  3 %> MB)</span></label>
+        <% if (c['image'] !== '') { %>
+            <div class="thumb"><img src="<%-  e(url(c['image'])) %>" alt="Current image"><label class="check"><input type="checkbox" name="remove_image" value="1"> Remove current image</label></div>
+        <% } %>
+        <input id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp"></div>
+    <div class="btn-row">
+        <button class="btn btn-primary" type="submit">Save category</button>
+        <a class="btn btn-ghost-dark" href="<%-  e(url('admin/categories.php')) %>">Cancel</a>
+    </div>
+</form>
+<%- include("admin-footer") %>

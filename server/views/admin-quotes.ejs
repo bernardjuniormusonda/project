@@ -1,0 +1,46 @@
+<%- include("admin-header") %>
+<div class="tabs">
+    <a href="<%-  e(url('admin/quotes.php')) %>"<%-  filter === 'all' ? ' class="active"' : '' %>>All (<%-  counts['all'] %>)</a>
+    <% for (const [k ,  label] of Object.entries(QUOTE_STATUSES)) { %>
+        <a href="<%-  e(url('admin/quotes.php?status=' + k)) %>"<%-  filter === k ? ' class="active"' : '' %>><%-  e(label) %> (<%-  counts[k] ?? 0 %>)</a>
+    <% } %>
+    <span class="spacer"></span>
+    <a class="btn btn-sm btn-ghost-dark" href="<%-  e(url('admin/export.php?type=quotes')) %>">Download CSV</a>
+</div>
+
+<% if (!rows.length) { %><p class="muted">Nothing here yet.</p><% } %>
+<% for (const r of rows) { %>
+    <details class="entry<%-  r['status'] === 'new' ? ' unread' : '' %>">
+        <summary>
+            <span class="who"><%-  e(r['name']) %></span>
+            <span class="what"><%-  e(r['organisation'] !== '' ? r['organisation'] : r['ref']) %></span>
+            <span class="pill pill-<%-  e(r['status']) %>"><%-  e(QUOTE_STATUSES[r['status']] ?? r['status']) %></span>
+            <span class="when"><%-  e(substr(r['created_at'], 0, 16)) %></span>
+        </summary>
+        <div class="entry-body">
+            <p><strong>Ref:</strong> <%-  e(r['ref']) %> &middot; <strong>Email:</strong> <a href="mailto:<%-  e(r['email']) %>?subject=<%-  rawurlencode('Your quote request ' + r['ref']) %>"><%-  e(r['email']) %></a>
+                <% if (r['phone'] !== '') { %> &middot; <strong>Phone:</strong> <a href="tel:+<%-  e(phone_digits(r['phone'])) %>"><%-  e(r['phone']) %></a><% } %>
+                <% if (r['location'] !== '') { %><br><strong>Deliver to:</strong> <%-  e(r['location']) %><% } %>
+                <% if (r['needed_by'] !== '') { %> &middot; <strong>Needed by:</strong> <%-  e(r['needed_by']) %><% } %></p>
+            <% if (r['items'] !== '') { %><p class="label">Items requested</p><div class="quote"><%-  nl2br(e(r['items'])) %></div><% } %>
+            <% if (r['details'] !== '') { %><p class="label">Details</p><div class="quote"><%-  nl2br(e(r['details'])) %></div><% } %>
+
+            <form method="post" class="form inline-form">
+                <%-  csrf_field() %><input type="hidden" name="id" value="<%-  r['id'] %>">
+                <div class="row">
+                    <div class="field"><label for="st<%-  r['id'] %>">Status</label>
+                        <select id="st<%-  r['id'] %>" name="status">
+                            <% for (const [k ,  label] of Object.entries(QUOTE_STATUSES)) { %><option value="<%-  e(k) %>"<%-  r['status'] === k ? ' selected' : '' %>><%-  e(label) %></option><% } %>
+                        </select></div>
+                    <div class="field"><label for="nt<%-  r['id'] %>">Internal note <span class="opt">(not shown to customer)</span></label>
+                        <input id="nt<%-  r['id'] %>" name="admin_note" maxlength="3000" value="<%-  e(r['admin_note']) %>"></div>
+                </div>
+                <div class="btn-row">
+                    <button class="btn btn-sm btn-primary" name="action" value="save">Save</button>
+                    <button class="btn btn-sm btn-danger" name="action" value="delete" data-confirm-btn="Delete this quote request permanently?">Delete</button>
+                </div>
+            </form>
+        </div>
+    </details>
+<% } %>
+<%- include("admin-footer") %>

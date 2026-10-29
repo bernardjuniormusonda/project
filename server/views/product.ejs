@@ -1,0 +1,53 @@
+<%- include("header") %>
+<section class="page-hero">
+    <div class="container">
+        <p class="eyebrow"><a class="crumb" href="<%- e(url('products.php')) %>">Products</a> / <%- e(c['title']) %></p>
+        <h1><%- e(c['title']) %></h1>
+        <p class="lead"><%- e(c['summary']) %></p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container detail-grid">
+        <article>
+            <% if (c['image'] !== '') { %>
+                <img class="detail-image" src="<%- e(url(c['image'])) %>"<%- img_srcset(c['image'], '(max-width: 900px) 100vw, 800px') %> alt="<%- e(c['title']) %>">
+            <% } %>
+            <% if (c['tagline'] !== '') { %><p class="tagline"><%- e(c['tagline']) %></p><% } %>
+            <div class="prose"><%- paragraphs(c['body']) %></div>
+
+            <% if (items.length) { %>
+                <h2 class="items-title">We supply</h2>
+                <p class="muted small">Tap <strong>Add</strong> to build a quote list, then send it to us in one go.</p>
+                <ul class="items">
+                    <% for (const it of items) { %>
+                        <li>
+                            <span><%- e(it) %></span>
+                            <button type="button" class="add-btn" data-item="<%- e(it) %>" data-cat="<%- e(c['title']) %>" aria-label="Add <%- e(it) %> to quote list"><%- icon('plus', 16) %> <span>Add</span></button>
+                        </li>
+                    <% } %>
+                </ul>
+            <% } %>
+        </article>
+
+        <aside class="sidebar">
+            <div class="panel">
+                <h3>Get a quote</h3>
+                <p class="small muted">Ask for prices on anything in this category. We reply with a competitive quote.</p>
+                <a class="btn btn-accent block" href="<%- e(url('quote.php')) %>">Request a quote <span class="basket-count" data-basket-count hidden>0</span></a>
+                <a class="btn btn-ghost-dark block" href="tel:+<%- e(phone_digits(setting('phone'))) %>">Call <%- e(setting('phone')) %></a>
+            </div>
+            <% if (others.length) { %>
+                <div class="panel">
+                    <h3>More categories</h3>
+                    <ul class="side-links">
+                        <% for (const o of others) { %>
+                            <li><a href="<%- e(url('product.php?slug=' + o['slug'])) %>"><%- e(o['title']) %></a></li>
+                        <% } %>
+                    </ul>
+                </div>
+            <% } %>
+        </aside>
+    </div>
+</section>
+<%- include("footer") %>

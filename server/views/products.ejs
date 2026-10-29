@@ -1,0 +1,36 @@
+<%- include("header") %>
+<section class="page-hero">
+    <div class="container">
+        <p class="eyebrow">One partner, many solutions</p>
+        <h1>Our products</h1>
+        <p class="lead">Wide range of products. Competitive prices. Reliable supply. Quality guaranteed.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="search-row">
+            <label class="sr-only" for="product-search">Search products</label>
+            <input id="product-search" type="search" placeholder="Search products, e.g. toner, laptop, overalls..." autocomplete="off">
+            <span class="muted small" id="search-count"></span>
+        </div>
+
+        <% if (!cats.length) { %>
+            <p class="center muted">Products will be listed here soon.</p>
+        <% } else { %>
+            <div class="card-grid" id="product-grid">
+                <% for (const c of cats) { %>
+                    <%- include("category-card", {c}) %>
+                <% } %>
+            </div>
+            <p class="center muted" id="no-results" hidden>No matching products. <a href="<%- e(url('quote.php')) %>">Ask us</a>: we can source almost anything.</p>
+        <% } %>
+
+        <div class="panel more-panel">
+            <h3>Can't see what you need?</h3>
+            <p>Our range goes well beyond this list. Tell us what you are looking for and we will source it.</p>
+            <a class="btn btn-primary" href="<%- e(url('quote.php')) %>">Request a quote</a>
+        </div>
+    </div>
+</section>
+<%- include("footer") %>

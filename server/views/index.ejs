@@ -1,0 +1,108 @@
+<%- include("header") %>
+<section class="hero">
+    <div class="container hero-inner">
+        <div class="hero-copy reveal">
+            <p class="eyebrow"><%- e(setting('hero_kicker')) %></p>
+            <h1><%- e(setting('hero_title')) %></h1>
+            <p class="lead"><%- e(setting('hero_text')) %></p>
+            <div class="btn-row">
+                <a class="btn btn-accent" href="<%- e(url('quote.php')) %>">Request a quote</a>
+                <a class="btn btn-ghost" href="<%- e(url('products.php')) %>">Browse products</a>
+            </div>
+            <ul class="hero-points">
+                <% for (const w of slice(why, 0, 4)) { %>
+                    <li><%- icon('check', 16) %> <%- e(w) %></li>
+                <% } %>
+            </ul>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+            <div class="mosaic">
+                <img class="m1" src="<%- e(url('assets/img/products/digital-printing.jpg')) %>"<%- img_srcset('assets/img/products/digital-printing.jpg', '(max-width: 700px) 70vw, 340px') %> alt="">
+                <img class="m2" src="<%- e(url('assets/img/products/promotional.jpg')) %>"<%- img_srcset('assets/img/products/promotional.jpg', '(max-width: 700px) 70vw, 340px') %> alt="">
+                <img class="m3" src="<%- e(url('assets/img/products/workwear-ppe.jpg')) %>"<%- img_srcset('assets/img/products/workwear-ppe.jpg', '(max-width: 700px) 70vw, 340px') %> alt="">
+                <div class="m-badge"><strong>Quality</strong><strong>Variety</strong><strong>Reliability</strong></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="trust-strip">
+    <div class="container trust-grid">
+        <div class="trust reveal"><%- icon('award', 30) %><div><strong>Trusted supplier</strong><span>Serving businesses &amp; institutions</span></div></div>
+        <div class="trust reveal"><%- icon('shield', 30) %><div><strong>Quality assured</strong><span>Products you can rely on</span></div></div>
+        <div class="trust reveal"><%- icon('truck', 30) %><div><strong>On-time delivery</strong><span>Nationwide coverage</span></div></div>
+        <div class="trust reveal"><%- icon('tag', 30) %><div><strong>Competitive prices</strong><span>Wholesale value in bulk</span></div></div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-head reveal">
+            <p class="eyebrow dark">One partner, many solutions</p>
+            <h2>What we supply</h2>
+        </div>
+        <div class="card-grid">
+            <% for (const c of featured) { %>
+                <%- include("category-card", {c}) %>
+            <% } %>
+        </div>
+        <p class="center"><a class="btn btn-primary" href="<%- e(url('products.php')) %>">See all <%- count(cats) %> categories</a></p>
+    </div>
+</section>
+
+<section class="section section-tint">
+    <div class="container split">
+        <div class="reveal">
+            <p class="eyebrow dark">Who we are</p>
+            <h2>Creativity with purpose</h2>
+            <p class="mission"><%- e(setting('motto')) %></p>
+        </div>
+        <div class="prose reveal">
+            <p><%- e(setting('about_who')) %></p>
+            <p><%- e(setting('about_what')) %></p>
+            <p><%- e(setting('institutions_note')) %></p>
+            <p><a class="link-arrow" href="<%- e(url('about.php')) %>">More about us <%- icon('arrow', 16) %></a></p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-head reveal">
+            <p class="eyebrow dark">How we help</p>
+            <h2>Our services</h2>
+        </div>
+        <div class="service-grid">
+            <% for (const [ic, t, d] of services) { %>
+                <div class="service reveal"><span class="service-icon"><%- icon(ic, 26) %></span><div><h3><%- e(t) %></h3><p><%- e(d) %></p></div></div>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<% if (clients.length || creds.length) { %>
+<section class="section section-tint">
+    <div class="container center">
+        <% if (clients.length) { %>
+            <p class="eyebrow dark">Working together. Building success.</p>
+            <h2>Organisations we serve</h2>
+            <ul class="pill-list">
+                <% for (const cl of clients) { %><li><%- e(cl) %></li><% } %>
+            </ul>
+        <% } %>
+        <% if (creds.length) { %>
+            <ul class="cred-list">
+                <% for (const cr of creds) { %><li><%- icon('shield', 18) %> <%- e(cr) %></li><% } %>
+            </ul>
+        <% } %>
+    </div>
+</section>
+<% } %>
+
+<section class="cta-band">
+    <div class="container cta-inner">
+        <div><h2>Need it in bulk? Let's talk.</h2><p>Tell us what you need and we will come back with a competitive quote.</p></div>
+        <a class="btn btn-accent" href="<%- e(url('quote.php')) %>">Request a quote</a>
+    </div>
+</section>
+<%- include("footer") %>
